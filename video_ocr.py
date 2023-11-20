@@ -17,9 +17,13 @@ import multiprocessing
 import tqdm
 import click
 from functools import wraps
+import time
+from collections import deque
+import re
+import boto3
+import threading
 
-
-IS_CL = False
+IS_CL = True
 FILEPATH_DOC = "Path to the input video file"
 SAMPLE_RATE_DOC = "Number of frames to sample per second"
 DEBUG_DIR_DOC = (
@@ -44,6 +48,21 @@ def _error_log(text, *args, **kwargs):
 @_only_if_cl
 def _info_log(text, *args, **kwargs):
     click.echo(text, *args, **kwargs)
+
+class ThreadLocalTextractClient:
+    def __init__(self):
+        self.local = threading.local()
+
+    def get(self):
+        if not hasattr(self.local, "client"):
+            self.local.client = boto3.client(
+                "textract",
+                region_name="us-east-1",
+            )
+        return self.local.client
+
+
+_textract_client_singleton = ThreadLocalTextractClient()
 
 
 class _NoOpProgressBar:
@@ -82,9 +101,22 @@ def _open_cv_video(filepath):
     finally:
         cap.release()
 
+def _get_cropped_frame(frame, top_percentage=0.25):
+    # Get the dimensions of the frame
+    height, width = frame.shape[:2]
+
+    # Calculate the height of the top portion to keep
+    top_height = int(height * top_percentage)
+
+    # Select the region of interest (ROI) corresponding to the top portion
+    cropped_frame = frame[:top_height, :]
+
+    return cropped_frame
+
 
 def _get_frames(video_capture, sample_rate):
     fps = int(video_capture.get(cv.CAP_PROP_FPS))
+    _info_log(f"{fps=}")
     pbar.total = (
         video_capture.get(cv.CAP_PROP_FRAME_COUNT) // (fps // sample_rate)
     ) - 1
@@ -97,6 +129,7 @@ def _get_frames(video_capture, sample_rate):
         if frame_number % (fps // sample_rate) != 0:
             continue
         frame = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        # cropped_frame = _get_cropped_frame(frame)
         yield Frame(frame_number, frame, frame_number // fps)
 
 
@@ -108,20 +141,55 @@ def _pairwise(iterable):
 
 def _are_similar_frame(f1, f2):
     diff = np.count_nonzero(phash(f1.image) != phash(f2.image))
-    return diff <= 15
+    return diff == 0
 
 
 def _filter_redundant_frames(frames):
-    for f1, f2 in _pairwise(frames):
-        if not _are_similar_frame(f1, f2):
-            yield f1
-        else:
-            pbar.update()
 
+    # Create a deque to store frames
+    frame_buffer = deque(maxlen=2)
+
+    # for f1, f2 in _pairwise(frames):
+    #     if not _are_similar_frame(f1, f2):
+    #         yield f1
+    #     else:
+    #         pbar.update()
+
+    for frame in frames:
+        # Add the current frame to the deque
+        frame_buffer.append(frame)
+
+        if len(frame_buffer) < 2:
+            yield frame
+        else:
+            f1, f2 = frame_buffer
+            if not _are_similar_frame(f1, f2):
+                yield f2
+            else:
+                pbar.update()
+
+
+# def _ocr(frame):
+#     frame.image = _get_cropped_frame(frame.image)
+#     pil_image = Image.fromarray(frame.image)
+#     text = tesserocr.image_to_text(pil_image)
+#     frame.text = text
+#     pbar.update()
+#     return frame
 
 def _ocr(frame):
-    pil_image = Image.fromarray(frame.image)
-    text = tesserocr.image_to_text(pil_image)
+    frame.image = _get_cropped_frame(frame.image)
+    client = _textract_client_singleton.get()
+    response = client.detect_document_text(
+                    Document={"Bytes": cv.imencode(".jpg", frame.image)[1].tobytes()}
+                )
+    text = "\n".join(
+        [
+            item["Text"]
+            for item in response["Blocks"]
+            if "Text" in item and item["BlockType"] == "LINE"
+        ]
+    )
     frame.text = text
     pbar.update()
     return frame
@@ -177,6 +245,47 @@ def _display_frames(frames):
         _info_log(frame.text)
     _info_log("-" * terminal_width)
 
+def _get_question_number(ocr_text):
+
+    # Define the regex pattern for matching the question number
+    regex_pattern = r"Question\s+(\d+)\s*[\/|lI1]\s*(\d+)"
+
+    # Search for the regex pattern in the text
+    match = re.search(regex_pattern, ocr_text)
+
+    # Check if a match is found
+    if match:
+        return match.group(1)
+    else:
+        return "No valid question detected"
+
+
+def _display_question_segments(frames):
+
+    failed_ocr_frames = []
+    for frame in frames:
+        question_number = _get_question_number(frame.text)
+        _info_log(f"{_get_time_stamp(frame.ts_second)} ({frame.frame_number}) -> {question_number}")
+        if question_number == "No valid question detected":
+            failed_ocr_frames.append(frame)
+    
+    _info_log(f"Number of failed OCR frames : {len(failed_ocr_frames)}")
+
+    _write_if_debug(failed_ocr_frames, "failed_ocrs")
+
+
+def timeit(func):
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        execution_time = end_time - start_time
+        print(
+            f"Function {func.__name__} took {execution_time:.3f} seconds to execute"
+        )
+        return result
+
+    return wrapper
 
 @click.command()
 @click.argument(
@@ -192,6 +301,7 @@ def _display_frames(frames):
     type=click.Path(exists=True, writable=True, file_okay=False, dir_okay=True),
     help=DEBUG_DIR_DOC,
 )
+@timeit
 def main(filepath, sample_rate, debug_dir):
     global IS_CL
     global pbar
@@ -201,7 +311,10 @@ def main(filepath, sample_rate, debug_dir):
         frames = perform_video_ocr(
             filepath, sample_rate=sample_rate, debug_dir=debug_dir
         )
-    _display_frames(frames)
+        
+    _info_log(f"Total number of frames found : {len(frames)}")
+    # _display_frames(frames)
+    _display_question_segments(frames)
 
 
 if IS_CL:

@@ -130,3 +130,8 @@ dmypy.json
 **/*.swp
 .DS_Store
 .idea
+
+debugdir/*
+failed_ocrs/*
+tesseract_failed_ocrs/*
+*.mp4
