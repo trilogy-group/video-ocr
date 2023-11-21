@@ -1,23 +1,26 @@
+python3 video_ocr.py GMT20230616-160139_Recording_1744x794.mp4 --sample_rate=1 --debug_dir="debugdir"
 fps=25
-Total number of frames found : 1538
-00:01:38 (2450) -> No valid question detected
-00:02:49 (4225) -> No valid question detected
-00:03:31 (5275) -> No valid question detected
-00:03:43 (5575) -> No valid question detected
-00:03:44 (5600) -> No valid question detected
-00:03:46 (5650) -> No valid question detected
-00:03:47 (5675) -> No valid question detected
-00:03:48 (5700) -> No valid question detected
-00:03:49 (5725) -> No valid question detected
-00:03:52 (5800) -> No valid question detected
-00:03:53 (5825) -> No valid question detected
-00:03:54 (5850) -> No valid question detected
-00:03:55 (5875) -> No valid question detected
-00:03:56 (5900) -> No valid question detected
-00:03:57 (5925) -> No valid question detected
-00:03:58 (5950) -> No valid question detected
-00:04:01 (6025) -> No valid question detected
-00:04:02 (6050) -> 1
+Total number of unique frames found : 1538/3663
+FalsePositive = 1
+FalseNegative = 2
+00:01:38 (2450) -> No valid question detected (TrueNegative)
+00:02:49 (4225) -> No valid question detected (TrueNegative)
+00:03:31 (5275) -> No valid question detected (TrueNegative)
+00:03:43 (5575) -> No valid question detected (TrueNegative)
+00:03:44 (5600) -> No valid question detected (TrueNegative)
+00:03:46 (5650) -> No valid question detected (TrueNegative)
+00:03:47 (5675) -> No valid question detected (TrueNegative)
+00:03:48 (5700) -> No valid question detected (TrueNegative)
+00:03:49 (5725) -> No valid question detected (TrueNegative)
+00:03:52 (5800) -> No valid question detected (TrueNegative)
+00:03:53 (5825) -> No valid question detected (TrueNegative)
+00:03:54 (5850) -> No valid question detected (TrueNegative)
+00:03:55 (5875) -> No valid question detected (TrueNegative)
+00:03:56 (5900) -> No valid question detected (TrueNegative)
+00:03:57 (5925) -> No valid question detected (TrueNegative)
+00:03:58 (5950) -> No valid question detected (TrueNegative)
+00:04:01 (6025) -> No valid question detected (TrueNegative)
+00:04:02 (6050) -> 1 
 00:04:03 (6075) -> 1
 00:04:04 (6100) -> 1
 00:04:05 (6125) -> 1
@@ -426,7 +429,7 @@ Total number of frames found : 1538
 00:21:48 (32700) -> 14
 00:21:49 (32725) -> 14
 00:21:50 (32750) -> 14
-00:21:54 (32850) -> No valid question detected
+00:21:54 (32850) -> No valid question detected (FalseNegative)
 00:21:55 (32875) -> 14
 00:21:56 (32900) -> 14
 00:21:57 (32925) -> 14
@@ -544,7 +547,7 @@ Total number of frames found : 1538
 00:26:12 (39300) -> 16
 00:26:15 (39375) -> 16
 00:26:16 (39400) -> 16
-00:26:18 (39450) -> No valid question detected
+00:26:18 (39450) -> No valid question detected (FalseNegative)
 00:26:25 (39625) -> 16
 00:26:26 (39650) -> 16
 00:26:27 (39675) -> 16
@@ -1185,8 +1188,8 @@ Total number of frames found : 1538
 00:50:03 (75075) -> 30
 00:50:04 (75100) -> 31
 00:50:07 (75175) -> 32
-00:50:09 (75225) -> No valid question detected
-00:50:13 (75325) -> No valid question detected
+00:50:09 (75225) -> No valid question detected (TrueNegative)
+00:50:13 (75325) -> No valid question detected (TrueNegative)
 00:50:14 (75350) -> 29
 00:50:18 (75450) -> 28
 00:50:21 (75525) -> 27
@@ -1452,14 +1455,14 @@ Total number of frames found : 1538
 00:58:20 (87500) -> 31
 00:58:21 (87525) -> 32
 00:58:25 (87625) -> 32
-00:58:26 (87650) -> No valid question detected
-00:58:29 (87725) -> No valid question detected
-00:58:30 (87750) -> No valid question detected
-00:58:32 (87800) -> No valid question detected
-00:58:33 (87825) -> No valid question detected
-00:58:34 (87850) -> No valid question detected
-00:58:35 (87875) -> No valid question detected
-00:58:39 (87975) -> No valid question detected
+00:58:26 (87650) -> No valid question detected (TrueNegative)
+00:58:29 (87725) -> No valid question detected (TrueNegative)
+00:58:30 (87750) -> No valid question detected (TrueNegative)
+00:58:32 (87800) -> No valid question detected (TrueNegative)
+00:58:33 (87825) -> No valid question detected (TrueNegative)
+00:58:34 (87850) -> No valid question detected (TrueNegative)
+00:58:35 (87875) -> No valid question detected (TrueNegative)
+00:58:39 (87975) -> No valid question detected (TrueNegative)
 00:58:40 (88000) -> 6
 00:58:41 (88025) -> 6
 00:58:42 (88050) -> 6
@@ -1471,72 +1474,72 @@ Total number of frames found : 1538
 00:58:54 (88350) -> 6
 00:58:58 (88450) -> 32
 00:59:01 (88525) -> 32
-00:59:02 (88550) -> No valid question detected
-00:59:04 (88600) -> No valid question detected
-00:59:06 (88650) -> No valid question detected
-00:59:07 (88675) -> No valid question detected
-00:59:08 (88700) -> No valid question detected
-00:59:09 (88725) -> No valid question detected
-00:59:14 (88850) -> No valid question detected
-00:59:17 (88925) -> No valid question detected
-00:59:18 (88950) -> No valid question detected
-00:59:19 (88975) -> No valid question detected
-00:59:20 (89000) -> No valid question detected
-00:59:21 (89025) -> No valid question detected
-00:59:23 (89075) -> No valid question detected
-00:59:24 (89100) -> No valid question detected
-00:59:25 (89125) -> No valid question detected
-00:59:26 (89150) -> No valid question detected
-00:59:30 (89250) -> No valid question detected
-00:59:31 (89275) -> No valid question detected
-00:59:32 (89300) -> No valid question detected
-00:59:34 (89350) -> No valid question detected
-00:59:37 (89425) -> No valid question detected
-00:59:41 (89525) -> No valid question detected
-00:59:42 (89550) -> No valid question detected
-00:59:43 (89575) -> No valid question detected
-00:59:44 (89600) -> No valid question detected
-00:59:45 (89625) -> No valid question detected
-01:00:09 (90225) -> No valid question detected
-01:00:11 (90275) -> No valid question detected
-01:00:12 (90300) -> 5
-01:00:13 (90325) -> No valid question detected
-01:00:14 (90350) -> No valid question detected
-01:00:15 (90375) -> No valid question detected
-01:00:16 (90400) -> No valid question detected
-01:00:18 (90450) -> No valid question detected
-01:00:19 (90475) -> No valid question detected
-01:00:20 (90500) -> No valid question detected
-01:00:22 (90550) -> No valid question detected
-01:00:23 (90575) -> No valid question detected
-01:00:25 (90625) -> No valid question detected
-01:00:26 (90650) -> No valid question detected
-01:00:27 (90675) -> No valid question detected
-01:00:28 (90700) -> No valid question detected
-01:00:29 (90725) -> No valid question detected
-01:00:30 (90750) -> No valid question detected
-01:00:31 (90775) -> No valid question detected
-01:00:32 (90800) -> No valid question detected
-01:00:33 (90825) -> No valid question detected
-01:00:34 (90850) -> No valid question detected
-01:00:37 (90925) -> No valid question detected
-01:00:38 (90950) -> No valid question detected
-01:00:39 (90975) -> No valid question detected
-01:00:40 (91000) -> No valid question detected
-01:00:41 (91025) -> No valid question detected
-01:00:42 (91050) -> No valid question detected
-01:00:43 (91075) -> No valid question detected
-01:00:44 (91100) -> No valid question detected
-01:00:45 (91125) -> No valid question detected
-01:00:46 (91150) -> No valid question detected
-01:00:50 (91250) -> No valid question detected
-01:00:52 (91300) -> No valid question detected
-01:00:53 (91325) -> No valid question detected
-01:00:55 (91375) -> No valid question detected
-01:00:56 (91400) -> No valid question detected
-01:00:57 (91425) -> No valid question detected
-01:01:00 (91500) -> No valid question detected
-01:01:01 (91525) -> No valid question detected
-01:01:03 (91575) -> No valid question detected
-Number of failed OCR frames : 95
+00:59:02 (88550) -> No valid question detected (TrueNegative)
+00:59:04 (88600) -> No valid question detected (TrueNegative)
+00:59:06 (88650) -> No valid question detected (TrueNegative)
+00:59:07 (88675) -> No valid question detected (TrueNegative)
+00:59:08 (88700) -> No valid question detected (TrueNegative)
+00:59:09 (88725) -> No valid question detected (TrueNegative)
+00:59:14 (88850) -> No valid question detected (TrueNegative)
+00:59:17 (88925) -> No valid question detected (TrueNegative)
+00:59:18 (88950) -> No valid question detected (TrueNegative)
+00:59:19 (88975) -> No valid question detected (TrueNegative)
+00:59:20 (89000) -> No valid question detected (TrueNegative)
+00:59:21 (89025) -> No valid question detected (TrueNegative)
+00:59:23 (89075) -> No valid question detected (TrueNegative)
+00:59:24 (89100) -> No valid question detected (TrueNegative)
+00:59:25 (89125) -> No valid question detected (TrueNegative)
+00:59:26 (89150) -> No valid question detected (TrueNegative)
+00:59:30 (89250) -> No valid question detected (TrueNegative)
+00:59:31 (89275) -> No valid question detected (TrueNegative)
+00:59:32 (89300) -> No valid question detected (TrueNegative)
+00:59:34 (89350) -> No valid question detected (TrueNegative)
+00:59:37 (89425) -> No valid question detected (TrueNegative)
+00:59:41 (89525) -> No valid question detected (TrueNegative)
+00:59:42 (89550) -> No valid question detected (TrueNegative)
+00:59:43 (89575) -> No valid question detected (TrueNegative)
+00:59:44 (89600) -> No valid question detected (TrueNegative)
+00:59:45 (89625) -> No valid question detected (TrueNegative)
+01:00:09 (90225) -> No valid question detected (TrueNegative)
+01:00:11 (90275) -> No valid question detected (TrueNegative)
+01:00:12 (90300) -> 5 (FalsePositive)
+01:00:13 (90325) -> No valid question detected (TrueNegative)
+01:00:14 (90350) -> No valid question detected (TrueNegative)
+01:00:15 (90375) -> No valid question detected (TrueNegative)
+01:00:16 (90400) -> No valid question detected (TrueNegative)
+01:00:18 (90450) -> No valid question detected (TrueNegative)
+01:00:19 (90475) -> No valid question detected (TrueNegative)
+01:00:20 (90500) -> No valid question detected (TrueNegative)
+01:00:22 (90550) -> No valid question detected (TrueNegative)
+01:00:23 (90575) -> No valid question detected (TrueNegative)
+01:00:25 (90625) -> No valid question detected (TrueNegative)
+01:00:26 (90650) -> No valid question detected (TrueNegative)
+01:00:27 (90675) -> No valid question detected (TrueNegative)
+01:00:28 (90700) -> No valid question detected (TrueNegative)
+01:00:29 (90725) -> No valid question detected (TrueNegative)
+01:00:30 (90750) -> No valid question detected (TrueNegative)
+01:00:31 (90775) -> No valid question detected (TrueNegative)
+01:00:32 (90800) -> No valid question detected (TrueNegative)
+01:00:33 (90825) -> No valid question detected (TrueNegative)
+01:00:34 (90850) -> No valid question detected (TrueNegative)
+01:00:37 (90925) -> No valid question detected (TrueNegative)
+01:00:38 (90950) -> No valid question detected (TrueNegative)
+01:00:39 (90975) -> No valid question detected (TrueNegative)
+01:00:40 (91000) -> No valid question detected (TrueNegative)
+01:00:41 (91025) -> No valid question detected (TrueNegative)
+01:00:42 (91050) -> No valid question detected (TrueNegative)
+01:00:43 (91075) -> No valid question detected (TrueNegative)
+01:00:44 (91100) -> No valid question detected (TrueNegative)
+01:00:45 (91125) -> No valid question detected (TrueNegative)
+01:00:46 (91150) -> No valid question detected (TrueNegative)
+01:00:50 (91250) -> No valid question detected (TrueNegative)
+01:00:52 (91300) -> No valid question detected (TrueNegative)
+01:00:53 (91325) -> No valid question detected (TrueNegative)
+01:00:55 (91375) -> No valid question detected (TrueNegative)
+01:00:56 (91400) -> No valid question detected (TrueNegative)
+01:00:57 (91425) -> No valid question detected (TrueNegative)
+01:01:00 (91500) -> No valid question detected (TrueNegative)
+01:01:01 (91525) -> No valid question detected (TrueNegative)
+01:01:03 (91575) -> No valid question detected (TrueNegative)
+Number of failed OCR frames (No valid question detected) : 95
 Function main took 309.381 seconds to execute
