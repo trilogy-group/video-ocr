@@ -1,8 +1,12 @@
-from moviepy.editor import VideoFileClip, concatenate_videoclips
 from concurrent.futures import ProcessPoolExecutor
 import multiprocessing
 import time
 from concurrent.futures import ProcessPoolExecutor
+from moviepy.video.io.VideoFileClip import VideoFileClip
+from moviepy.video.compositing.concatenate import concatenate_videoclips
+
+# Specify the path to the FFmpeg executable
+ffmpeg_executable = "/usr/bin/ffmpeg"
 
 def timeit(func):
     def wrapper(*args, **kwargs):
@@ -34,10 +38,10 @@ def merge_video_clips(input_paths, output_path, batch_size=50):
     final_clips = []
     for clip_batch in clip_batches:
         clips = [VideoFileClip(clip_path) for clip_path in clip_batch]
-        merged_clip = concatenate_videoclips(clips, method="compose")
+        merged_clip = concatenate_videoclips(clips, method="chain")
         final_clips.append(merged_clip)
 
-    final_video = concatenate_videoclips(final_clips, method="compose")
+    final_video = concatenate_videoclips(final_clips, method="chain")
     final_video.write_videofile(output_path)
 
 @timeit
@@ -96,6 +100,6 @@ path_prefix = "video-stream/webcam-capture-stream/"
 input_clips = [f"{path_prefix}{filename}" for filename in read_and_trim_lines("video-stream/clips.txt")]
 output_file = "video-stream/merged_video_parallel_2.mp4"
 
-merge_video_clips_parallel(input_clips[:16], output_file, path_prefix, 4, 0)
+# merge_video_clips_parallel(input_clips[:16], output_file, path_prefix, 4, 0)
 # merge_video_clips(input_clips, output_file, 50)
-# merge_video_clips_recursive(input_clips, output_file, path_prefix, 50, 0)
+merge_video_clips_recursive(input_clips, output_file, path_prefix, 50, 0)
