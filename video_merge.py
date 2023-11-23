@@ -67,8 +67,8 @@ def merge_batch(clip_batch, path_prefix, iteration, i):
     if len(clip_batch) == 1:
         return clip_batch[0]
     else:
-        merged_clip_path = f"{path_prefix}merged-clips-parallel/merged_clip_{i}_i{iteration}.mp4"
-        concatenate_videoclips([VideoFileClip(clip_path) for clip_path in clip_batch], method="compose").write_videofile(merged_clip_path)
+        merged_clip_path = f"{path_prefix}merged-clips-parallel-2/merged_clip_{i}_i{iteration}.mp4"
+        concatenate_videoclips([VideoFileClip(clip_path) for clip_path in clip_batch], method="chain").write_videofile(merged_clip_path)
         return merged_clip_path
 
 @timeit
@@ -82,7 +82,7 @@ def merge_video_clips_parallel(input_paths, output_path, path_prefix, batch_size
     clip_batches = [input_paths[i:i + batch_size] for i in range(0, len(input_paths), batch_size)]
 
     # Run the loop in parallel
-    with ProcessPoolExecutor() as executor:
+    with ProcessPoolExecutor(max_workers=4) as executor:
         results = list(executor.map(merge_batch, clip_batches, [path_prefix] * len(clip_batches), [iteration] * len(clip_batches), range(len(clip_batches))))
 
     # Collect the results
@@ -94,8 +94,8 @@ def merge_video_clips_parallel(input_paths, output_path, path_prefix, batch_size
 
 path_prefix = "video-stream/webcam-capture-stream/"
 input_clips = [f"{path_prefix}{filename}" for filename in read_and_trim_lines("video-stream/clips.txt")]
-output_file = "video-stream/merged_video_parallel.mp4"
+output_file = "video-stream/merged_video_parallel_2.mp4"
 
-merge_video_clips_parallel(input_clips, output_file, path_prefix, 50, 0)
+merge_video_clips_parallel(input_clips[:16], output_file, path_prefix, 4, 0)
 # merge_video_clips(input_clips, output_file, 50)
 # merge_video_clips_recursive(input_clips, output_file, path_prefix, 50, 0)
