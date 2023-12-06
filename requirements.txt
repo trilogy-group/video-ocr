@@ -11,3 +11,4 @@ tesserocr==2.5.2
 tqdm==4.62.3
 video-ocr==0.0.2
 moviepy==1.26.11
+deepgram-sdk==2.12.0
