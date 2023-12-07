@@ -56,9 +56,9 @@ async def main():
   )
 
   # Write the response to the console
-  # print(json.dumps(response, indent=4))
+  print(json.dumps(response, indent=4))
 
-  deepgram.extra.to_SRT(response)
+  # deepgram.extra.to_SRT(response)
 
 
   # Write only the transcript to the console
