@@ -22,12 +22,17 @@ from collections import deque
 import re
 import boto3
 import threading
+from collections import defaultdict
+import json
 
 IS_CL = True
 FILEPATH_DOC = "Path to the input video file"
 SAMPLE_RATE_DOC = "Number of frames to sample per second"
 DEBUG_DIR_DOC = (
     "If provided, writes frame and their respective texts here, for debugging"
+)
+NO_VALID_QUESTION_OCR_DIR_DOC = (
+    "If provided, writes frame and their respective texts here, for frames where no questions detected"
 )
 
 
@@ -227,7 +232,7 @@ def perform_video_ocr(filepath: str, sample_rate: int = 1, debug_dir: str = ""):
     return non_empty_frames
 
 
-def _get_time_stamp(seconds):
+def _get_formatted_time(seconds):
     rem_seconds = seconds
     hours = rem_seconds // 3600
     rem_seconds %= 3600
@@ -241,7 +246,7 @@ def _display_frames(frames):
     _info_log("")
     for frame in frames:
         _info_log("-" * terminal_width)
-        _info_log(f"Timestamp = {_get_time_stamp(frame.ts_second)}")
+        _info_log(f"Timestamp = {_get_formatted_time(frame.ts_second)}")
         _info_log(frame.text)
     _info_log("-" * terminal_width)
 
@@ -260,18 +265,34 @@ def _get_question_number(ocr_text):
         return "No valid question detected"
 
 
-def _display_question_segments(frames):
+def _display_question_segments(frames, no_valid_question_ocr_dir):
 
-    failed_ocr_frames = []
+    no_valid_question_ocr_frames = []
     for frame in frames:
         question_number = _get_question_number(frame.text)
-        _info_log(f"{_get_time_stamp(frame.ts_second)} ({frame.frame_number}) -> {question_number}")
+        _info_log(f"{_get_formatted_time(frame.ts_second)} ({frame.frame_number}) -> {question_number}")
         if question_number == "No valid question detected":
-            failed_ocr_frames.append(frame)
+            no_valid_question_ocr_frames.append(frame)
     
-    _info_log(f"Number of failed OCR frames : {len(failed_ocr_frames)}")
+    _info_log(f"Number of frames with no valid question detected : {len(no_valid_question_ocr_frames)}")
+    _write_if_debug(no_valid_question_ocr_frames, no_valid_question_ocr_dir)
 
-    _write_if_debug(failed_ocr_frames, "failed_ocrs")
+
+def _prepare_question_segments(frames):
+
+    question_time_frame_ranges = defaultdict(list)
+    previous_question_number = None
+
+    for frame in frames:
+        current_question_number = _get_question_number(frame.text)
+        current_time = _get_formatted_time(frame.ts_second)
+        if current_question_number != previous_question_number:
+            question_time_frame_ranges[current_question_number].append({"start_time": current_time, "end_time": current_time})
+        else:
+            question_time_frame_ranges[current_question_number][-1]["end_time"] = current_time
+        previous_question_number = current_question_number
+    
+    json.dump(question_time_frame_ranges, open("question_segments.json", "w"))
 
 
 def timeit(func):
@@ -301,8 +322,13 @@ def timeit(func):
     type=click.Path(exists=True, writable=True, file_okay=False, dir_okay=True),
     help=DEBUG_DIR_DOC,
 )
+@click.option(
+    "--no_valid_question_ocr_dir",
+    type=click.Path(exists=True, writable=True, file_okay=False, dir_okay=True),
+    help=NO_VALID_QUESTION_OCR_DIR_DOC,
+)
 @timeit
-def main(filepath, sample_rate, debug_dir):
+def main(filepath, sample_rate, debug_dir, no_valid_question_ocr_dir):
     global IS_CL
     global pbar
     IS_CL = True
@@ -314,7 +340,8 @@ def main(filepath, sample_rate, debug_dir):
         
     _info_log(f"Total number of frames found : {len(frames)}")
     # _display_frames(frames)
-    _display_question_segments(frames)
+    _display_question_segments(frames, no_valid_question_ocr_dir)
+    # _prepare_question_segments(frames)
 
 
 if IS_CL:

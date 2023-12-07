@@ -136,3 +136,4 @@ failed_ocrs/*
 tesseract_failed_ocrs/*
 *.mp4
 debugdir_*
+no_valid_question_ocr_dir_*
